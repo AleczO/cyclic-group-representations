@@ -21,7 +21,6 @@ lossFN = torch.nn.CrossEntropyLoss()
 x = to_one_hot(dataset.input, p).to(device)
 y = dataset.output.to(device)
 
-
 for epoch in range(EPOCHS):
     model.train()
     optimizer.zero_grad()
