@@ -3,11 +3,11 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class NTKLinear(nn.Module):
+class LinearN(nn.Module):
     def __init__(self, in_features, out_features, sigma_w=1.0):
         super().__init__()
         self.weight = nn.Parameter(torch.randn(out_features, in_features)) 
-        self.scale = sigma_w / in_features ** 0.5
+        self.scale = sigma_w / torch.power(in_features, 0.5)  
 
     def forward(self, x):
         return self.scale * F.linear(x, self.weight)
@@ -22,11 +22,9 @@ class FNN(nn.Module):
     def __init__(self, p, hidden):
         super().__init__()
         self.FN = nn.Sequential(
-            NTKLinear(2 * p, hidden),
+            nn.Linear(2 * p, hidden, bias=False),
             Square(),
-            NTKLinear(hidden, hidden),
-            Square(),
-            NTKLinear(hidden, p),
+            nn.Linear(hidden, p, bias=False)
         )
 
     def forward(self, x):
